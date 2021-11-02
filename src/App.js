@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { getUsers, getPost } from './services/actions';
 import './App.css';
 
 function App(props) {
+  const [searchItem, setSearchItem] = useState('');
   useEffect(() => {
     props.actions.getUsers();
   }, [])
@@ -15,6 +16,7 @@ function App(props) {
     <div className = "app">
       <h2>OVC-Interview-Test</h2>
       <h3>Users</h3>
+      <input className = "search-input" placeholder = "search..."  onChange = {(e) => setSearchItem(e.target.value)} value = { searchItem }/>
       <table className="app-table">
         <thead>
           <tr>
@@ -34,7 +36,9 @@ function App(props) {
         </thead>
         <tbody>
         {
-          props.users && props.users.map((user, index) => (
+          props.users && props.users.filter(user => {
+            return user.name.toUpperCase().includes( searchItem.toUpperCase() )
+          }).map((user) => (
             <tr key = { user.id } onClick = {() => handleRowClick(user.id)}>
               <td>{ user.name }</td>
               <td>{ user.email }</td>
