@@ -1,16 +1,21 @@
 import { useEffect } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
-import './App.css';
 import { getUsers, getPost } from './services/actions';
+import './App.css';
 
 function App(props) {
   useEffect(() => {
     props.actions.getUsers();
   }, [])
+  const handleRowClick = (userId) => {
+    props.actions.getPost(userId);
+  }
   return (
     <div className = "app">
-      <table className="users">
+      <h2>OVC-Interview-Test</h2>
+      <h3>Users</h3>
+      <table className="app-table">
         <thead>
           <tr>
             <th>
@@ -30,7 +35,7 @@ function App(props) {
         <tbody>
         {
           props.users && props.users.map((user, index) => (
-            <tr key = { user.id }>
+            <tr key = { user.id } onClick = {() => handleRowClick(user.id)}>
               <td>{ user.name }</td>
               <td>{ user.email }</td>
               <td>{ user.address.city }</td>
@@ -39,7 +44,27 @@ function App(props) {
           ))
         }
        </tbody>
+
       </table>
+      <h3>Posts</h3>
+      <table className = "app-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              props.post && props.post.map((post, index) => (
+                <tr key = {post.id}>
+                  <td>{ post.title }</td>
+                  <td>{ post.body }</td>
+                </tr>
+              ))
+            }
+          </tbody>
+       </table>
     </div>
   );
 }
