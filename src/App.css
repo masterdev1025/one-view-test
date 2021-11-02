@@ -21,11 +21,18 @@
 .app-table tr:nth-child(even){background-color: #f2f2f2;}
 
 .app-table tr:hover {background-color: #ddd;}
-
+.app-table tr.selected{
+  background-color: #19694c;
+  color: white;
+}
 .app-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
   background-color: #04AA6D;
   color: white;
+}
+.loading-td{
+  text-align: center;
+  font-size: 1.5rem   ;
 }

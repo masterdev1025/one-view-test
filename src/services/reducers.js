@@ -2,6 +2,7 @@ const initialState = {
     users: [],
     posts: null,
     loading: false,
+    postGetLoading: false,
     error: null
 }
 const reducer = (state = initialState, action) => {
@@ -26,23 +27,23 @@ const reducer = (state = initialState, action) => {
                 loading: false,
                 error: action.paylaod
             }
-        case "GET_POST_REQEST":
+        case "GET_POST_REQUEST":
             return {
                 ...state,
-                loading: true,
+                postGetLoading: true,
                 error: null
             }
         case "GET_POST_SUCCEED":
             return {
                 ...state,
-                loading: false,
+                postGetLoading: false,
                 error: null,
                 post: action.payload
             }
         case "GET_POST_FAILED":
             return {
                 ...state,
-                loading: false,
+                postGetLoading: false,
                 error: action.payload,
                 post: null
             }

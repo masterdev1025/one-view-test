@@ -1,37 +1,37 @@
 import { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
-import { getUsers, getPost } from './services/actions';
+import { getUsers, getPost, getPostSucceed } from './services/actions';
 import './App.css';
 
 function App(props) {
   const [searchItem, setSearchItem] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
   useEffect(() => {
     props.actions.getUsers();
   }, [])
   const handleRowClick = (userId) => {
-    props.actions.getPost(userId);
+    if( userId === selectedUser ){
+      setSelectedUser(null);
+      props.actions.getPostSucceed([]);
+    } else {
+      setSelectedUser(userId);
+      props.actions.getPost(userId);
+    }
+    
   }
   return (
     <div className = "app">
       <h2>OVC-Interview-Test</h2>
       <h3>Users</h3>
-      <input className = "search-input" placeholder = "search..."  onChange = {(e) => setSearchItem(e.target.value)} value = { searchItem }/>
+      <input data-testid = "search-input" className = "search-input" placeholder = "search..."  onChange = {(e) => setSearchItem(e.target.value)} value = { searchItem }/>
       <table className="app-table">
         <thead>
           <tr>
-            <th>
-              Name
-            </th>
-            <th>
-              Email
-            </th>
-            <th>
-              City
-            </th>
-            <th>
-              Company
-            </th>
+            <th width = "25%">Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Company</th>
           </tr>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@ function App(props) {
           props.users && props.users.filter(user => {
             return user.name.toUpperCase().includes( searchItem.toUpperCase() )
           }).map((user) => (
-            <tr key = { user.id } onClick = {() => handleRowClick(user.id)}>
+            <tr key = { user.id } onClick = {() => handleRowClick(user.id)} className = { user.id == selectedUser ? 'selected' : '' }>
               <td>{ user.name }</td>
               <td>{ user.email }</td>
               <td>{ user.address.city }</td>
@@ -54,18 +54,23 @@ function App(props) {
       <table className = "app-table">
           <thead>
             <tr>
-              <th>Title</th>
+              <th width = "25%">Title</th>
               <th>Body</th>
             </tr>
           </thead>
           <tbody>
             {
-              props.post && props.post.map((post, index) => (
+              props.post && !props.postGetLoading &&  props.post.map((post, index) => (
                 <tr key = {post.id}>
                   <td>{ post.title }</td>
                   <td>{ post.body }</td>
                 </tr>
               ))
+            }
+            {
+              props.postGetLoading && <tr>
+                <td colSpan = "2" className = "loading-td">Loading...</td>
+              </tr>
             }
           </tbody>
        </table>
@@ -80,7 +85,7 @@ export default connect((state) => {
 }, (dispatch) => {
   return {
     actions: bindActionCreators({
-      getUsers, getPost
+      getUsers, getPost, getPostSucceed
     }, dispatch)
   }
 })(App);
